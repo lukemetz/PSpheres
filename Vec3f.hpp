@@ -13,4 +13,24 @@ struct Vec3f
     this->y = 0;
     this->z = 0;
   }
+
+  Vec3f operator-(const Vec3f& v)
+  {
+    return Vec3f(x-v.x, y-v.y, z-v.z);
+  }
+
+  Vec3f operator+(const Vec3f& v)
+  {
+    return Vec3f(x+v.x, y+v.y, z+v.z);
+  }
+
+  Vec3f operator*(const Vec3f& v)
+  {
+    return Vec3f(x*v.x, y*v.y, z*v.z);
+  }
+
+  Vec3f operator/(const Vec3f& v)
+  {
+    return Vec3f(x/v.x, y/v.y, z/v.z);
+  }
 };
