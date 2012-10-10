@@ -3,12 +3,14 @@
 struct Vec3f
 {
   float x, y, z;
-  Vec3f(float x, float y, float z) {
+  Vec3f(float x, float y, float z)
+  {
     this->x = x;
     this->y = y;
     this->z = z;
   }
-  Vec3f() {
+  Vec3f()
+  {
     this->x = 0;
     this->y = 0;
     this->z = 0;
@@ -34,9 +36,14 @@ struct Vec3f
     return Vec3f(x/v.x, y/v.y, z/v.z);
   }
 
+  Vec3f operator*(float v)
+  {
+    return Vec3f(x*v, y*v, y*z);
+  }
+
   Vec3f operator/(float v)
   {
-    return Vec3f(x/v, y/v, y/z);
+    return Vec3f(x/v, y/v, z/v);
   }
 
   float length()

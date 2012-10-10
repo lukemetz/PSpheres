@@ -17,9 +17,9 @@ bpy.ops.mesh.select_all(action='SELECT')
 
 bpy.ops.object.modifier_add(type='REMESH')
 
-low.modifiers[0].octree_depth=3
-low.modifiers[0].scale=.7
-print(low.modifiers[0])
+high.modifiers[0].octree_depth = 4
+high.modifiers[0].scale = .9
+high.modifiers[0].mode = "SMOOTH"
 
 bpy.ops.object.modifier_apply(modifier="Remesh")
 

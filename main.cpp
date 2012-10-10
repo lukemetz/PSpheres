@@ -13,6 +13,9 @@ int main(int argc, char *argv[])
 
   printf(node->description().c_str());
   printf(root->description().c_str());
+  printf(root->treeDescription().c_str());
+  root->fillNodes(.5);
+  printf(root->treeDescription().c_str());
   GtsSurface * surf = root->generateChildSurface();
   write_surface_to_file(argv[1], surf);
 };
