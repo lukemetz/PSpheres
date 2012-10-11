@@ -7,7 +7,7 @@ solution "Sketch"
     language "C++"
     files {"*.hpp", "*.cpp"}
     includedirs {"."}
-    links{'OpenCL', 'gts', 'noise','glib-2.0'}
+    links{'Pyrite', 'OpenCL', 'gts', 'noise','glib-2.0'}
     buildoptions {"`pkg-config --libs --cflags glib-2.0` --std=c++11" } ---Wall -Wextra
     configuration "Debug"
       defines { "DEBUG" }

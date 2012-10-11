@@ -1,11 +1,14 @@
 #include <sstream>
 #include <algorithm>
-
 #include "Node.hpp"
+
+using namespace psphere;
+
 Node::Node(Vec3f pos, float radius)
 {
   this->pos = pos;
   this->radius = radius;
+  this->type = 0;
   parent = nullptr;
 }
 
@@ -21,6 +24,7 @@ void Node::removeChild(Node * node)
   if (iterator != children.end()) {
     children.erase(iterator);
   }
+  printf("Child size %d \n", children.size());
 }
 
 void Node::detach()
@@ -37,6 +41,7 @@ std::string Node::description()
   stream << " radius:";
   stream << radius;
   stream << " children:" << children.size();
+  stream << " type:" << type;
   stream << ">\n";
   return stream.str();
 }
@@ -57,26 +62,48 @@ std::string Node::treeDescription()
 
 Node * Node::fillNodes(float fill)
 {
-  for( Node * node : children) {
+  int origSize = children.size();
+  for (int i=0; i < origSize; ++i) {
+    Node *node = children[0];
     Vec3f diff = node->pos - this->pos;
     Vec3f direction = diff.normalize();
-    int extraNodes = 1+static_cast<int>(diff.length()/fill);
-    node->detach();
+    int extraNodes = static_cast<int>(diff.length()/fill);
+    extraNodes = abs(extraNodes)+1;
+
     Node * aboveNode = this;
     float movePerNode = diff.length()/extraNodes;
-
     float radiusPerNode = (node->radius - this->radius)/extraNodes;
     for (int i=1; i < extraNodes; i++) {
       Node * n = new Node(direction*movePerNode*i+this->pos, radiusPerNode*i+this->radius);
       aboveNode->addChild(n);
+      n->type = 1;
       aboveNode = n;
     }
+
+    node->detach();
     aboveNode->addChild(node);
     node->fillNodes(fill);
   }
 }
 
-GtsSurface * Node::generateChildSurface() {
+GtsSurface * Node::generateChildSurfacePyrite()
+{
+  pyrite::VoxelData *v = new pyrite::VoxelData(Horde3D::Vec3f(3, 3, 3));
+  v->initOpenCl();
+  generateChildPyrite(v);
+  return v->marchingCube();
+}
+
+void Node::generateChildPyrite(pyrite::VoxelData * voxelData)
+{
+  voxelData->clAddSphere(Horde3D::Vec3f(pos.x+1.5, pos.y+1.5, pos.z), radius);
+  for (Node * n : children) {
+    n->generateChildPyrite(voxelData);
+  }
+}
+
+GtsSurface * Node::generateChildSurfaceGts()
+{
   GtsSurface * surface = generateSurface();
   if (children.size() == 0) {
     return surface;
@@ -86,7 +113,7 @@ GtsSurface * Node::generateChildSurface() {
 		       gts_edge_class (),
 		       gts_vertex_class ());
   for(Node * node : children) {
-    GtsSurface * s = node->generateChildSurface();
+    GtsSurface * s = node->generateChildSurfaceGts();
     GNode * bb1 = gts_bb_tree_surface(surface);
     GNode * bb2 = gts_bb_tree_surface(s);
     printf("Failing on 1 %s", node->description().c_str());
