@@ -88,7 +88,7 @@ Node * Node::fillNodes(float fill)
 
 GtsSurface * Node::generateChildSurfacePyrite()
 {
-  pyrite::VoxelData *v = new pyrite::VoxelData(Horde3D::Vec3f(3, 3, 3));
+  pyrite::VoxelData *v = new pyrite::VoxelData(Horde3D::Vec3f(3, 3, 3), 1.0/16.0);
   v->initOpenCl();
   generateChildPyrite(v);
   return v->marchingCube();

@@ -7,16 +7,30 @@
 using namespace psphere;
 
 Node * biped();
+Node * swimmer();
 
 int main(int argc, char *argv[])
 {
-  Node * root = biped();
+  Node * root = swimmer();
   root->fillNodes(.1);
   printf(root->treeDescription().c_str());
   GtsSurface * surf = root->generateChildSurfacePyrite();
   write_surface_to_file(argv[1], surf);
 }
 
+Node * swimmer()
+{
+  Node * lower = new Node(Vec3f(0,-.5,1), .3);
+  Node * root = new Node(Vec3f(0,.5,1), .3);
+  Node * upper = new Node(Vec3f(0,1,1), .3);
+  root->addChild(lower);
+  root->addChild(upper);
+  for (int flip=-1; flip < 2; flip+=2) {
+    Node * fin = new Node(Vec3f(flip*.6,.5,1), .3);
+    root->addChild(fin);
+  }
+  return root;
+}
 
 Node * biped()
 {
