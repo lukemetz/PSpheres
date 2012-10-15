@@ -49,6 +49,54 @@ namespace psphere
       return Vec3f(x/v, y/v, z/v);
     }
 
+    Vec3f & operator+=(const Vec3f& v)
+    {
+      this->x = this->x+v.x;
+      this->y = this->y+v.y;
+      this->z = this->z+v.z;
+      return *this;
+    }
+
+    Vec3f & operator*=(const Vec3f& v)
+    {
+      this->x = this->x*v.x;
+      this->y = this->y*v.y;
+      this->z = this->z*v.z;
+      return *this;
+    }
+
+    Vec3f & operator/=(const Vec3f& v)
+    {
+      this->x = this->x/v.x;
+      this->y = this->y/v.y;
+      this->z = this->z/v.z;
+      return *this;
+    }
+
+    Vec3f & operator-=(const Vec3f& v)
+    {
+      this->x = this->x-v.x;
+      this->y = this->y-v.y;
+      this->z = this->z-v.z;
+      return *this;
+    }
+
+    Vec3f & operator+=(const float v)
+    {
+      this->x = this->x+v;
+      this->y = this->y+v;
+      this->z = this->z+v;
+      return *this;
+    }
+
+    Vec3f & operator-=(const float v)
+    {
+      this->x = this->x-v;
+      this->y = this->y-v;
+      this->z = this->z-v;
+      return *this;
+    }
+
     float length()
     {
       return sqrt(x*x+y*y+z*z);
