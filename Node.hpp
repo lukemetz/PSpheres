@@ -14,6 +14,9 @@ namespace psphere
   {
   public:
     Node(Vec3f pos, float radius);
+    Node(Node *node);
+    ~Node();
+
     Vec3f pos;
     float radius;
     int type;
@@ -22,6 +25,7 @@ namespace psphere
     void addChild(Node * node);
     void removeChild(Node * node);
     void detach();
+
     GtsSurface * generateChildSurfaceGts();
     GtsSurface * generateChildSurfacePyrite();
     std::vector<Node *> children;

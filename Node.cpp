@@ -12,6 +12,24 @@ Node::Node(Vec3f pos, float radius)
   parent = nullptr;
 }
 
+Node::Node(Node * node)
+{
+  this->pos = node->pos;
+  this->radius = node->radius;
+  this->type = node->type;
+  for (Node * child : node->children) {
+    Node * temp = new Node(child);
+    this->addChild(temp);
+  }
+}
+
+Node::~Node()
+{
+  for (Node * child : children) {
+    delete child;
+  }
+}
+
 void Node::addChild(Node * node)
 {
   children.push_back(node);
@@ -89,17 +107,24 @@ Node * Node::fillNodes(float fill)
 GtsSurface * Node::generateChildSurfacePyrite()
 {
   pyrite::VoxelData *v = new pyrite::VoxelData(Horde3D::Vec3f(3, 3, 3), 1.0/16.0);
+  printf("init opencl \n");
   v->initOpenCl();
+  printf("Generating \n");
   generateChildPyrite(v);
+  printf("Running marching cube \n");
   return v->marchingCube();
 }
 
 void Node::generateChildPyrite(pyrite::VoxelData * voxelData)
 {
+  printf("Generating %s", this->description().c_str());
   voxelData->clAddSphere(Horde3D::Vec3f(pos.x+1.5, pos.y+1.5, pos.z), radius);
+  printf("Done \n");
   for (Node * n : children) {
+    printf("Generating loopin?\n");
     n->generateChildPyrite(voxelData);
   }
+  printf("asdf \n");
 }
 
 GtsSurface * Node::generateChildSurfaceGts()
@@ -123,7 +148,10 @@ GtsSurface * Node::generateChildSurfaceGts()
 
     gts_surface_inter_boolean(inter, out, GTS_1_OUT_2);
     gts_surface_inter_boolean(inter, out, GTS_2_OUT_1);
-
+    gts_object_destroy(GTS_OBJECT(s));
+    gts_object_destroy(GTS_OBJECT(inter));
+    gts_object_destroy(GTS_OBJECT(bb1));
+    gts_object_destroy(GTS_OBJECT(bb2));
   }
   return out;
 }
@@ -139,7 +167,7 @@ GtsSurface * Node::generateSurface() {
 		       gts_face_class (),
 		       gts_edge_class (),
 		       gts_vertex_class ());
-  int level = 4;
+  int level = 3;
   gts_surface_generate_sphere (surface, level);
 
   gts_surface_foreach_vertex (surface, (GtsFunc) gts_point_transform, matrix);
